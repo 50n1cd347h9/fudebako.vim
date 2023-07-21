@@ -1,29 +1,25 @@
-" == functions ===================================================================
+" chop given url to github repository name
 function! s:get_repo_name_from_url(repo_url) abort
 	let l:pattern = '\([^/]\+\)$'
-	let l:repo = matchstr(a:repo_url, l:pattern)
-	
+	let l:repo = matchstr(a:repo_url, l:pattern)	
 	return l:repo
 endfunction
 
 
-function! s:install_plugin(repo_urls) abort
-	for l:repo_url in a:repo_urls
+function! s:install_plugin() abort
+	for l:repo_url in s:repo_urls
 		let l:repo = s:get_repo_name_from_url(l:repo_url)
-		let l:clone_dir = '~/.vim/pack/plugins/start/' .. l:repo
-	
+		let l:clone_dir = '~/.vim/pack/plugins/start/' .. l:repo	
 		" if repo not installed
 		if !isdirectory(expand(l:clone_dir)) 
 			let l:command = 'git clone' .. ' ' .. l:repo_url .. ' ' .. l:clone_dir
 			echo system(l:command)
 		endif
-
 		let &packpath .= ',' . l:clone_dir
 	endfor	
 endfunction
 
 
-" インストールされているプラグインがrepos.vimに存在しないときアンインストール
 function! s:uninstall_plugin()
 	let l:result = system('ls ~/.vim/pack/plugins/start')
 	let l:repos_installed = split(l:result, '\n')
@@ -31,38 +27,33 @@ function! s:uninstall_plugin()
 	for l:repo_url in s:repo_urls
 		call add(l:repos_wont_dissapear, s:get_repo_name_from_url(l:repo_url))
 	endfor
-
 	for l:repo in l:repos_installed
 		if index(l:repos_wont_dissapear, l:repo) ==# -1
 			let l:repo_dir = '~/.vim/pack/plugins/start/' .. l:repo
-			let l:command = 'rm -rf' .. ' ' .. l:repo_dir
-			
+			let l:command = 'rm -rf' .. ' ' .. l:repo_dir	
 			echo system(l:command)
 		endif
 	endfor		
 endfunction
-" =====================================================================================
 
 
-" == make repository urls array ==========================================
-let s:repo_urls = readfile(expand('~/.vim/repos.vim'))
+function! s:make_url_array()
+	let l:repo_urls = readfile(expand('~/.vim/repos.vim'))
+	let l:i = 0
+	for l:item in l:repo_urls
+		if l:item !~ '^"' && l:item != ''
+			let l:repo_urls[i] = l:item
+			let l:i += 1
+		endif
+	endfor
+	for i in range(1, len(l:repo_urls)-i)
+		call remove(l:repo_urls, -1)
+	endfor
+	return l:repo_urls
+endfunction
 
-let i = 0
-for item in s:repo_urls
-	if item !~ '^"' && item != ''
-		let s:repo_urls[i] = item
-		let i += 1
-	endif
-endfor
 
-for i in range(1, len(s:repo_urls)-i)
-	call remove(s:repo_urls, -1)
-endfor
-" ===============================================
-
-
-" == call functions ==========================
-call s:install_plugin(s:repo_urls)
+let s:repo_urls = s:make_url_array()
+call s:install_plugin()
 call s:uninstall_plugin()
-" ======================================
 

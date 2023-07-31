@@ -9,19 +9,20 @@ endfunction
 function! s:install_plugin() abort
 	for l:repo_url in s:repo_urls
 		let l:repo = s:get_repo_name_from_url(l:repo_url)
-		let l:clone_dir = '~/.vim/pack/plugins/start/' .. l:repo	
+		let l:clone_dir = '~/.vim/plugins/' .. l:repo	
 		" if repo not installed
 		if !isdirectory(expand(l:clone_dir)) 
 			let l:command = 'git clone' .. ' ' .. l:repo_url .. ' ' .. l:clone_dir
 			echo system(l:command)
 		endif
-		let &packpath .= ',' . l:clone_dir
+		"let &packpath .= ',' . l:clone_dir
+		let &runtimepath .= ',' . l:clone_dir
 	endfor	
 endfunction
 
 
 function! s:uninstall_plugin()
-	let l:result = system('ls ~/.vim/pack/plugins/start')
+	let l:result = system('ls ~/.vim/plugins')
 	let l:repos_installed = split(l:result, '\n')
 	let l:repos_wont_dissapear = []
 	for l:repo_url in s:repo_urls
@@ -29,7 +30,7 @@ function! s:uninstall_plugin()
 	endfor
 	for l:repo in l:repos_installed
 		if index(l:repos_wont_dissapear, l:repo) ==# -1
-			let l:repo_dir = '~/.vim/pack/plugins/start/' .. l:repo
+			let l:repo_dir = '~/.vim/plugins/' .. l:repo
 			let l:command = 'rm -rf' .. ' ' .. l:repo_dir	
 			echo system(l:command)
 		endif
@@ -56,4 +57,4 @@ endfunction
 let s:repo_urls = s:make_url_array()
 call s:install_plugin()
 call s:uninstall_plugin()
-
+""echo &runtimepath

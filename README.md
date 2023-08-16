@@ -7,7 +7,7 @@ pluginmanager for vim
 $ mkdir ~/.vim
 $ cd ~/.vim
 $ git clone https://github.com/shotaro-ada/fudebako.vim
-$ mkdir -p ~/.vim/pack/plugins/start
+$ mkdir -p ~/.vim/plugins
 $ echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
 $ touch ~/.vim/repos.vim
 ```

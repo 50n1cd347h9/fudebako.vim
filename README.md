@@ -28,7 +28,7 @@ $ cd ~/.config/nvim
 $ git clone https://github.com/shotaro-ada/fudebako.vim
 $ mkdir ~/.config/nvim/plugins
 $ touch ~/.config/nvim/init.vim
-$ echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.config/nvim/init.vim
+$ echo 'source $HOME/.configt/nvim/fudebako.vim/manager.vim' >> ~/.config/nvim/init.vim
 $ touch ~/.config/nvim/repos.vim
 ```
 ### 2.

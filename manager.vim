@@ -58,7 +58,6 @@ endfunction
 
 if has('nvim')
 	let s:path = expand('~/.config/nvim/')
-	let s:command = 'ls' .. ' ' .. s:path .. 'plugins'
 else
 	let s:path = expand('~/.vim/')
 endif

@@ -32,7 +32,9 @@ mkdir ~/.config/nvim/plugins
 
 # insert following line to init.lua
 # vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")
-sed -i '1i vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")' ~/.config/nvim/init.lua
+sed -i \
+ '1i vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")' \
+ ~/.config/nvim/init.lua
 
 touch ~/.config/nvim/repos.vim
 ```

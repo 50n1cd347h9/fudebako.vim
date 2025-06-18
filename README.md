@@ -23,13 +23,18 @@ https://github.com/lambdalisue/fern.vim.git
 ## Neovim
 ### 1.
 ```bash
-$ mkdir -p ~/.config/nvim
-$ cd ~/.config/nvim
-$ git clone https://github.com/shotaro-ada/fudebako.vim
-$ mkdir ~/.config/nvim/plugins
-$ touch ~/.config/nvim/init.vim
-$ echo 'source $HOME/.config/nvim/fudebako.vim/manager.vim' >> ~/.config/nvim/init.vim
-$ touch ~/.config/nvim/repos.vim
+mkdir -p ~/.config/nvim
+cd ~/.config/nvim
+touch ~/.config/nvim/init.vim
+
+git clone https://github.com/50n1cd347h9/fudebako.vim
+mkdir ~/.config/nvim/plugins
+
+# insert following line to init.lua
+# vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")
+sed -i '1i vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")' ~/.config/nvim/init.lua
+
+touch ~/.config/nvim/repos.vim
 ```
 ### 2.
  Paste the url of any vim plugin on github into `repos.vim`.

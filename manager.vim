@@ -39,6 +39,12 @@ function! s:UninstallPlugin()
 	endfor		
 endfunction
 
+function! s:GetJsonFromYaml(yaml_path) abort
+	let l:python_path = '~/workspace/fudebako.vim/venv/bin/python3'
+	let l:cmd = expand(join([python_path, './yaml2json.py', a:yaml_path], ' '))
+	let l:json_text = system(cmd)
+	return json_decode(l:json_text)
+endfunction
 
 function! s:MakeUrlArray()
 	let l:repo_urls = readfile(s:path .. 'repos.vim')
@@ -66,3 +72,5 @@ endif
 let s:repo_urls = s:MakeUrlArray()
 call s:InstallPlugin()
 call s:UninstallPlugin()
+
+echo s:GetJsonFromYaml(expand('~/workspace/fudebako.vim/languages.yaml'))

@@ -1,9 +1,9 @@
 plugins:
   - "https://github.com/rebelot/kanagawa.nvim.git"
-  - "https://github.com/folke/tokyonight.nvim.git"
+  #- "https://github.com/folke/tokyonight.nvim.git"
+  - "https://github.com/nvim-treesitter/nvim-treesitter.git"
 
-#delayed:
-#  - url: "https://github.com/nvim-treesitter/nvim-treesitter.git"
-#    file_type: "python"
-#    event: "ahi" 
-
+delayed:
+  - url: "https://github.com/tpope/vim-surround"
+    filetype:
+      - "python"

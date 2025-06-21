@@ -5,13 +5,16 @@ pluginmanager for vim/neovim
 ## Vim
 ### 1.
 ```bash
-$ mkdir ~/.vim
-$ cd ~/.vim
-$ git clone https://github.com/shotaro-ada/fudebako.vim
-$ mkdir -p ~/.vim/plugins
-$ touch ~/.vim/vimrc
-$ echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
-$ touch ~/.vim/repos.vim
+mkdir ~/.vim
+cd ~/.vim
+
+git clone https://github.com/shotaro-ada/fudebako.vim
+mkdir -p ~/.vim/pack
+mkdir -p ~/.vim/pack/delayed/opt
+
+touch ~/.vim/vimrc
+echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
+touch ~/.vim/repos.vim
 ```
 ### 2.
  Paste the url of any vim plugin on github into `repos.vim`.
@@ -28,7 +31,8 @@ cd ~/.config/nvim
 touch ~/.config/nvim/init.vim
 
 git clone https://github.com/50n1cd347h9/fudebako.vim
-mkdir ~/.config/nvim/plugins
+mkdir ~/.config/nvim/pack
+mkdir -p ~/.config/nvim/pack/delayed/opt
 
 # insert following line to init.lua
 # vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")

@@ -1,14 +1,14 @@
 " chop given url to github repository name
-function! s:get_repo_name_from_url(repo_url) abort
+function! s:GetRepoNameFromUrl(repo_url) abort
 	let l:pattern = '\([^/]\+\)$'
 	let l:repo = matchstr(a:repo_url, l:pattern)	
 	return l:repo
 endfunction
 
 
-function! s:install_plugin() abort
+function! s:InstallPlugin() abort
 	for l:repo_url in s:repo_urls
-		let l:repo = s:get_repo_name_from_url(l:repo_url)
+		let l:repo = s:GetRepoNameFromUrl(l:repo_url)
 		let l:clone_dir = s:path .. 'plugins/' .. l:repo	
 		" if repo not installed
 		if !isdirectory(expand(l:clone_dir)) 
@@ -21,14 +21,14 @@ function! s:install_plugin() abort
 endfunction
 
 
-function! s:uninstall_plugin()
+function! s:UninstallPlugin()
 	let l:ls = 'ls' .. ' ' .. s:path .. 'plugins'
 
 	let l:result = system(l:ls)
 	let l:repos_installed = split(l:result, '\n')
 	let l:repos_wont_dissapear = []
 	for l:repo_url in s:repo_urls
-		call add(l:repos_wont_dissapear, s:get_repo_name_from_url(l:repo_url))
+		call add(l:repos_wont_dissapear, s:GetRepoNameFromUrl(l:repo_url))
 	endfor
 	for l:repo in l:repos_installed
 		if index(l:repos_wont_dissapear, l:repo) ==# -1
@@ -40,7 +40,7 @@ function! s:uninstall_plugin()
 endfunction
 
 
-function! s:make_url_array()
+function! s:MakeUrlArray()
 	let l:repo_urls = readfile(s:path .. 'repos.vim')
 	let l:i = 0
 	for l:item in l:repo_urls
@@ -63,6 +63,6 @@ else
 endif
 
 
-let s:repo_urls = s:make_url_array()
-call s:install_plugin()
-call s:uninstall_plugin()
+let s:repo_urls = s:MakeUrlArray()
+call s:InstallPlugin()
+call s:UninstallPlugin()

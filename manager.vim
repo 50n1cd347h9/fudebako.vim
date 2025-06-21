@@ -66,6 +66,3 @@ endif
 let s:repo_urls = s:make_url_array()
 call s:install_plugin()
 call s:uninstall_plugin()
-
-
-

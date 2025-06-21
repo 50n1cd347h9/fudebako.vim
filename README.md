@@ -44,6 +44,7 @@ sed -i \
  init.lua
 
 touch plugins.yaml
+```
 
 # plugins.yaml
 plugins:

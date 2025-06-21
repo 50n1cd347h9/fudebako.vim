@@ -47,6 +47,7 @@ touch plugins.yaml
 ```
 
 # plugins.yaml
+```yaml
 plugins:
   - "https://github.com/rebelot/kanagawa.nvim.git"
   #- "https://github.com/folke/tokyonight.nvim.git"
@@ -61,3 +62,4 @@ delayed:
   - url: "https://github.com/lambdalisue/vim-fern"
     cmd:
       - "Fern"
+```

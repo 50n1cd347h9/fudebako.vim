@@ -3,7 +3,6 @@ pluginmanager for vim/neovim
 
 # Installation
 ## Vim
-### 1.
 ```bash
 mkdir ~/.vim
 cd ~/.vim
@@ -21,15 +20,9 @@ touch vimrc
 echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
 touch plugins.yaml
 ```
-### 2.
- Paste the url of any vim plugin on github into `repos.vim`.
-```
-https://github.com/lambdalisue/fern.vim.git
-```
 
 
 ## Neovim
-### 1.
 ```bash
 mkdir -p ~/.config/nvim
 cd ~/.config/nvim
@@ -51,9 +44,19 @@ sed -i \
  init.lua
 
 touch plugins.yaml
-```
-### 2.
- Paste the url of any vim plugin on github into `repos.vim`.
-```
-https://github.com/lambdalisue/fern.vim.git
-```
+
+# plugins.yaml
+plugins:
+  - "https://github.com/rebelot/kanagawa.nvim.git"
+  #- "https://github.com/folke/tokyonight.nvim.git"
+  - "https://github.com/nvim-treesitter/nvim-treesitter.git"
+
+delayed:
+  - url: "https://github.com/tpope/vim-surround"
+    filetype:
+      - "python"
+      - "ruby"
+
+  - url: "https://github.com/lambdalisue/vim-fern"
+    cmd:
+      - "Fern"

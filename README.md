@@ -3,43 +3,63 @@ pluginmanager for vim/neovim
 
 # Installation
 ## Vim
-### 1.
 ```bash
-$ mkdir ~/.vim
-$ cd ~/.vim
-$ git clone https://github.com/shotaro-ada/fudebako.vim
-$ mkdir -p ~/.vim/plugins
-$ touch ~/.vim/vimrc
-$ echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
-$ touch ~/.vim/repos.vim
-```
-### 2.
- Paste the url of any vim plugin on github into `repos.vim`.
-```
-https://github.com/lambdalisue/fern.vim.git
+mkdir ~/.vim
+cd ~/.vim
+
+# install pyyaml
+python3 -m venv venv
+source venv/bin/activate
+pip install pyyaml
+
+git clone https://github.com/shotaro-ada/fudebako.vim
+mkdir -p pack
+mkdir -p pack/delayed/opt
+
+touch vimrc
+echo 'source $HOME/.vim/fudebako.vim/manager.vim' >> ~/.vim/vimrc
+touch plugins.yaml
 ```
 
 
 ## Neovim
-### 1.
 ```bash
 mkdir -p ~/.config/nvim
 cd ~/.config/nvim
-touch ~/.config/nvim/init.vim
+touch init.lua
+
+# install pyyaml
+python3 -m venv venv
+source venv/bin/activate
+pip install pyyaml
 
 git clone https://github.com/50n1cd347h9/fudebako.vim
-mkdir ~/.config/nvim/plugins
+mkdir pack
+mkdir -p pack/delayed/opt
 
 # insert following line to init.lua
 # vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")
 sed -i \
  '1i vim.cmd("source " .. vim.fn.stdpath("config") .. "/fudebako.vim/manager.vim")' \
- ~/.config/nvim/init.lua
+ init.lua
 
-touch ~/.config/nvim/repos.vim
+touch plugins.yaml
 ```
-### 2.
- Paste the url of any vim plugin on github into `repos.vim`.
-```
-https://github.com/lambdalisue/fern.vim.git
+
+# plugins.yaml
+```yaml
+plugins:
+  - "https://github.com/rebelot/kanagawa.nvim.git"
+  #- "https://github.com/folke/tokyonight.nvim.git"
+  - "https://github.com/nvim-treesitter/nvim-treesitter.git"
+
+delayed:
+  - url: "https://github.com/tpope/vim-surround"
+    filetype:
+      - "python"
+      - "ruby"
+
+  - url: "https://github.com/lambdalisue/vim-fern"
+    cmd:
+      - "Fern"
 ```

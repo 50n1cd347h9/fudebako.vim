@@ -1,71 +1,166 @@
 " chop given url to github repository name
-function! s:get_repo_name_from_url(repo_url) abort
-	let l:pattern = '\([^/]\+\)$'
-	let l:repo = matchstr(a:repo_url, l:pattern)	
-	return l:repo
+function! s:GetRepoNameFromUrl(repo_url) abort
+	let pattern = '\([^/]\+\)$'
+	let repo = matchstr(a:repo_url, pattern)	
+	return repo
 endfunction
 
+function StrStr(haystack, needle) abort
+	let idx = stridx(a:haystack, a:needle)
+	if idx < 0
+		return ''
+	endif
 
-function! s:install_plugin() abort
-	for l:repo_url in s:repo_urls
-		let l:repo = s:get_repo_name_from_url(l:repo_url)
-		let l:clone_dir = s:path .. 'plugins/' .. l:repo	
-		" if repo not installed
-		if !isdirectory(expand(l:clone_dir)) 
-			let l:command = 'git clone' .. ' ' .. l:repo_url .. ' ' .. l:clone_dir
-			echo system(l:command)
-		endif
-		"let &packpath .= ',' . l:clone_dir
-		let &runtimepath .= ',' . l:clone_dir
-	endfor	
+	return strpart(a:haystack, idx)
 endfunction
 
+function! s:GetInstalled() abort
+	let result =  glob(s:plugin_path . '/*', 0, 1)
+	let result += glob(s:delayed_path .'/*', 0, 1)
+	" remove delayed in plugin_path
+	call filter(result, {_, val -> StrStr(s:delayed_path, val) ==# ''})
+	return result
+endfunction
 
-function! s:uninstall_plugin()
-	let l:ls = 'ls' .. ' ' .. s:path .. 'plugins'
+function! s:UninstallPlugin(json) abort
+	let urls = a:json['plugins']
+	let delayed = get(a:json, 'delayed', v:null)
 
-	let l:result = system(l:ls)
-	let l:repos_installed = split(l:result, '\n')
-	let l:repos_wont_dissapear = []
-	for l:repo_url in s:repo_urls
-		call add(l:repos_wont_dissapear, s:get_repo_name_from_url(l:repo_url))
+	if delayed isnot v:null
+		for item in delayed
+			let url = item['url']
+			call add(urls, url)
+		endfor
+	endif
+
+	let installed = s:GetInstalled()
+
+	let plugins_remain = []
+	for url in urls
+		call add(plugins_remain, s:GetRepoNameFromUrl(url))
 	endfor
-	for l:repo in l:repos_installed
-		if index(l:repos_wont_dissapear, l:repo) ==# -1
-			let l:repo_dir = s:path .. 'plugins/' .. l:repo
-			let l:command = 'rm -rf' .. ' ' .. l:repo_dir	
-			echo system(l:command)
+
+	for path in installed
+		let base_path = fnamemodify(path, ':t')
+		if index(plugins_remain, base_path) ==# -1
+			echo system(join(['rm', '-rf', path], ' '))
 		endif
 	endfor		
 endfunction
 
 
-function! s:make_url_array()
-	let l:repo_urls = readfile(s:path .. 'repos.vim')
-	let l:i = 0
-	for l:item in l:repo_urls
-		if l:item !~ '^"' && l:item != ''
-			let l:repo_urls[i] = l:item
-			let l:i += 1
-		endif
-	endfor
-	for i in range(1, len(l:repo_urls)-i)
-		call remove(l:repo_urls, -1)
-	endfor
-	return l:repo_urls
+function! s:GetJsonFromYaml() abort
+	let yaml_path = join([s:config_path, 'plugins.yaml'], '/')
+	let yaml2json = join([s:config_path, 'fudebako.vim/yaml2json.py'], '/')
+	let python_path = join([s:config_path, 'venv/bin/python3'], '/')
+
+	let cmd = join([python_path, yaml2json, yaml_path], ' ')
+	let json_text = system(cmd)
+	return json_decode(json_text)
 endfunction
 
 
+function! s:IsValidUrl(url) abort
+	return a:url !~ '^"' && a:url != ''
+endfunction
+
+
+function! s:PluginExists(plugin_dir) abort
+	return isdirectory(expand(a:plugin_dir)) 
+endfunction
+
+
+function! s:GitClone(url, clone_dir) abort
+	let cmd = join(['git', 'clone', a:url, a:clone_dir], ' ')
+	echo system(cmd)
+endfunction
+
+
+function! s:InstallPlugin(clone_dir, url)abort
+	if !s:PluginExists(a:clone_dir)
+		call s:GitClone(a:url, a:clone_dir)
+	endif
+endfunction
+
+function! s:InstallAllPlugins(urls) abort
+	for url in a:urls
+		let repo_name = s:GetRepoNameFromUrl(url)
+		let clone_dir = join([s:plugin_path, repo_name], '/')
+
+		call s:InstallPlugin(clone_dir, url)
+		let &runtimepath .= ',' . clone_dir
+	endfor	
+endfunction
+
+
+function! s:ExecuteAutoCmd(autocmd_conf) abort
+	let url = get(a:autocmd_conf, 'url', v:null)
+	if url is# v:null
+		return
+	endif
+
+	" list of string expected
+	let filetype = get(a:autocmd_conf, 'filetype', v:null)
+	" list of string expected
+	let cmd = get(a:autocmd_conf, 'cmd', v:null)
+	" list of string expected
+	let cond = get(a:autocmd_conf, 'condition', v:null)
+	let cmd_list = ['autocmd']
+
+	if filetype isnot v:null
+		call add(cmd_list, 'FileType')
+		call add(cmd_list, join(filetype, ','))
+	elseif cmd isnot v:null
+		call add(cmd_list, 'CmdUndefined')
+		call add(cmd_list, join(cmd, ','))
+	elseif cond isnot v:null
+		call add(cmd_list, cond)
+	else
+		return
+	endif
+
+	let repo_name = s:GetRepoNameFromUrl(url)
+	let clone_dir = join([s:delayed_path, repo_name], '/')
+
+	call add(cmd_list, printf(
+		\ '++once call %s(%s, %s) | packadd %s',
+		\ '<SID>InstallPlugin',
+		\ string(clone_dir),
+		\ string(url),
+		\ repo_name,
+		\))
+	let autocmd_str = join(cmd_list, ' ')
+
+	execute autocmd_str
+endfunction
+
+function! s:SubmitDelayed(delayed) abort
+	let &packpath .= ',' . s:config_path
+	for item in a:delayed
+		call s:ExecuteAutoCmd(item)
+	endfor
+endfunction
+
+
+
+function! s:Main() abort
+	let config_json = s:GetJsonFromYaml()
+	let urls = get(config_json, 'plugins', [])
+	let delayed = get(config_json, 'delayed', [])
+
+
+	call s:InstallAllPlugins(urls)
+	call s:SubmitDelayed(delayed)
+
+	call s:UninstallPlugin(config_json)
+endfunction
+
 if has('nvim')
-	let s:path = expand('~/.config/nvim/')
+	let s:config_path = expand('~/.config/nvim')
 else
-	let s:path = expand('~/.vim/')
+	let s:config_path = expand('~/.vim')
 endif
+let s:plugin_path = join([s:config_path, 'pack'], '/')
+let s:delayed_path = join([s:plugin_path, 'delayed/opt'], '/')
 
-
-let s:repo_urls = s:make_url_array()
-call s:install_plugin()
-call s:uninstall_plugin()
-
-
-
+call s:Main()

@@ -12,7 +12,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip install pyyaml
 
-git clone https://github.com/shotaro-ada/fudebako.vim
+git clone https://github.com/50n1cd347h9/fudebako.vim
 mkdir -p pack
 mkdir -p pack/delayed/opt
 

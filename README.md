@@ -7,13 +7,10 @@ pluginmanager for vim/neovim
 mkdir ~/.vim
 cd ~/.vim
 
-# install pyyaml
-python3 -m venv venv
-source venv/bin/activate
-pip install pyyaml
+# install yq
+apt install -y yq
 
-git clone https://github.com/shotaro-ada/fudebako.vim
-mkdir -p pack
+git clone https://github.com/50n1cd347h9/fudebako.vim
 mkdir -p pack/delayed/opt
 
 touch vimrc
@@ -28,13 +25,10 @@ mkdir -p ~/.config/nvim
 cd ~/.config/nvim
 touch init.lua
 
-# install pyyaml
-python3 -m venv venv
-source venv/bin/activate
-pip install pyyaml
+# install yq
+apt install -y yq
 
 git clone https://github.com/50n1cd347h9/fudebako.vim
-mkdir pack
 mkdir -p pack/delayed/opt
 
 # insert following line to init.lua

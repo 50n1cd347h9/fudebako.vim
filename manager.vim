@@ -51,10 +51,7 @@ endfunction
 
 function! s:GetJsonFromYaml() abort
 	let yaml_path = join([s:config_path, 'plugins.yaml'], '/')
-	let yaml2json = join([s:config_path, 'fudebako.vim/yaml2json.py'], '/')
-	let python_path = join([s:config_path, 'venv/bin/python3'], '/')
-
-	let cmd = join([python_path, yaml2json, yaml_path], ' ')
+	let cmd = join(['yq', '.', yaml_path], ' ')
 	let json_text = system(cmd)
 	return json_decode(json_text)
 endfunction
